@@ -22,12 +22,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-f*^$_$e(#yzwil^a=fc59xhtt1$4v+b-j&+n39x=qt48q9&f=u'
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-local-development-only'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+    if host.strip()
+]
 
 
 # Application definition
@@ -159,12 +166,15 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    origin for origin in os.getenv(
+    origin.strip()
+    for origin in os.environ.get(
         'CORS_ALLOWED_ORIGINS',
-        'http://localhost:5173,http://127.0.0.1:5173',
+        'http://localhost:5173,http://127.0.0.1:5173'
     ).split(',')
-    if origin
+    if origin.strip()
 ]
-
-FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173/')
+FRONTEND_URL = os.environ.get(
+    'FRONTEND_URL',
+    'http://localhost:5173/'
+)
 
